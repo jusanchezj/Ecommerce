@@ -2,75 +2,70 @@ import { createContext, useState, useEffect } from 'react'
 
 export const ShoppingCartContext = createContext()
 
-export const initializeLocalStorage=()=>{
-
-  const accountInLocalStorge = localStorage.getItem('account')
-  const signOutInLocalStorge = localStorage.getItem('sign-out')
+export const initializeLocalStorage = () => {
+  const accountInLocalStorage = localStorage.getItem('account')
+  const signOutInLocalStorage = localStorage.getItem('sign-out')
   let parsedAccount
   let parsedSignOut
 
-  if (!accountInLocalStorge) {
+  if (!accountInLocalStorage) {
     localStorage.setItem('account', JSON.stringify({}))
-    parsedAccount={}
-    
-  }else{
-    parsedAccount = JSON.parse(accountInLocalStorge)
-  }
-  
-  if (!signOutInLocalStorge){
-    localStorage.setItem('sign-out', JSON.stringify(false))
-    parsedSignOut = false
-  }else{
-    parsedSignOut=JSON.parse(signOutInLocalStorge)
+    parsedAccount = {}
+  } else {
+    parsedAccount = JSON.parse(accountInLocalStorage)
   }
 
+  if (!signOutInLocalStorage) {
+    localStorage.setItem('sign-out', JSON.stringify(false))
+    parsedSignOut = false
+  } else {
+    parsedSignOut = JSON.parse(signOutInLocalStorage)
+  }
 }
 
 export const ShoppingCartProvider = ({children}) => {
-  //My acoount
+  // My account
   const [account, setAccount] = useState({})
 
-  //Sign Out
-  const [signOut, setSignOut] = useState({})
+  // Sign out
+  const [signOut, setSignOut] = useState(false)
 
-  
-  //Shopping Cart * Increment quantity
+  // Shopping Cart · Increment quantity
   const [count, setCount] = useState(0)
-    
-  //Product detail Open/Close
+
+  // Product Detail · Open/Close
   const [isProductDetailOpen, setIsProductDetailOpen] = useState(false)
   const openProductDetail = () => setIsProductDetailOpen(true)
   const closeProductDetail = () => setIsProductDetailOpen(false)
- 
-  // Product Detail Show product
+
+  // Checkout Side Menu · Open/Close
+  const [isCheckoutSideMenuOpen, setIsCheckoutSideMenuOpen] = useState(false)
+  const openCheckoutSideMenu = () => setIsCheckoutSideMenuOpen(true)
+  const closeCheckoutSideMenu = () => setIsCheckoutSideMenuOpen(false)
+
+  // Product Detail · Show product
   const [productToShow, setProductToShow] = useState({})
 
-  //Shopping Cart - Add products to cart
-
+  // Shopping Cart · Add products to cart
   const [cartProducts, setCartProducts] = useState([])
+
+  // Shopping Cart · Order
+  const [order, setOrder] = useState([])
+
+  // Get products
+  const [items, setItems] = useState(null)
+  const [filteredItems, setFilteredItems] = useState(null)
 
   // Get products by title
   const [searchByTitle, setSearchByTitle] = useState(null)
-
- // Checkout Side Menu · Open/Close
- const [isCheckoutSideMenuOpen, setIsCheckoutSideMenuOpen] = useState(false)
- const openCheckoutSideMenu = () => setIsCheckoutSideMenuOpen(true)
- const closeCheckoutSideMenu = () => setIsCheckoutSideMenuOpen(false)
-
- // Shopping Cart · Order
-   const [order, setOrder] = useState([])
-
-  //Get products
-  const [items, setItems] = useState(null)
-  const [filteredItems, setFilteredItems] = useState(null)
 
   // Get products by category
   const [searchByCategory, setSearchByCategory] = useState(null)
 
   useEffect(() => {
     fetch('https://api.escuelajs.co/api/v1/products')
-    .then(response => response.json())
-    .then(data => setItems(data))
+      .then(response => response.json())
+      .then(data => setItems(data))
   }, [])
 
   const filteredItemsByTitle = (items, searchByTitle) => {
@@ -99,7 +94,6 @@ export const ShoppingCartProvider = ({children}) => {
     }
   }
 
-
   useEffect(() => {
     if (searchByTitle && searchByCategory) setFilteredItems(filterBy('BY_TITLE_AND_CATEGORY', items, searchByTitle, searchByCategory))
     if (searchByTitle && !searchByCategory) setFilteredItems(filterBy('BY_TITLE', items, searchByTitle, searchByCategory))
@@ -109,31 +103,31 @@ export const ShoppingCartProvider = ({children}) => {
 
   return (
     <ShoppingCartContext.Provider value={{
-        count,
-        setCount, 
-        openProductDetail,
-        closeProductDetail,
-        isProductDetailOpen,
-        productToShow,
-        setProductToShow,
-        cartProducts,
-        setCartProducts,
-        isCheckoutSideMenuOpen,
-        openCheckoutSideMenu,
-        closeCheckoutSideMenu,
-        order,
-        setOrder,
-        items,
-        setItems,
-        searchByTitle,
-        setSearchByTitle,
-        filteredItems,
-        searchByCategory,
-        setSearchByCategory,
-        account,
-        setAccount,
-        signOut,
-        setSignOut
+      count,
+      setCount,
+      openProductDetail,
+      closeProductDetail,
+      isProductDetailOpen,
+      productToShow,
+      setProductToShow,
+      cartProducts,
+      setCartProducts,
+      isCheckoutSideMenuOpen,
+      openCheckoutSideMenu,
+      closeCheckoutSideMenu,
+      order,
+      setOrder,
+      items,
+      setItems,
+      searchByTitle,
+      setSearchByTitle,
+      filteredItems,
+      searchByCategory,
+      setSearchByCategory,
+      account,
+      setAccount,
+      signOut,
+      setSignOut
     }}>
       {children}
     </ShoppingCartContext.Provider>
